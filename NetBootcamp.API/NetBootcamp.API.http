@@ -1,0 +1,6 @@
+@NetBootcamp.API_HostAddress = http://localhost:5251
+
+GET https://www.google.com
+Accept: application/json
+
+###
