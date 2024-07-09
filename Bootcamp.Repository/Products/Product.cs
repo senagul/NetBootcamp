@@ -1,12 +1,12 @@
-﻿namespace NetBootcamp.API.Products
+﻿namespace Bootcamp.Repository.Products
 {
-    public class Product
+    public class Product : BaseEntity<int>
     {
-        public int Id { get; set; }
         public string Name { get; set; } = default!;
         public decimal Price { get; set; }
 
         public DateTime Created { get; set; } = new();
+        public int Stock { get; set; }
 
         public string Barcode { get; init; } = default!;
     }

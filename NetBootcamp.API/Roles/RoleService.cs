@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Net;
+using Bootcamp.Service.SharedDTOs;
 using Microsoft.AspNetCore.Mvc;
-using NetBootcamp.API.DTOs;
 using NetBootcamp.API.Roles.DTOs;
 
 namespace NetBootcamp.API.Roles

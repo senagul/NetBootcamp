@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Bootcamp.Service;
+using Bootcamp.Service.Products.AsyncMethods;
+using Bootcamp.Service.Products.DTOs;
+using Bootcamp.Service.Products.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using NetBootcamp.API.Controllers;
-using NetBootcamp.API.DTOs;
-using NetBootcamp.API.Products.DTOs;
+
+using NetBootcamp.API.Filters;
+
 
 namespace NetBootcamp.API.Products
 {
@@ -9,9 +14,9 @@ namespace NetBootcamp.API.Products
     {
         //private readonly IProductService _productService = ProductServiceFactory.GetService();
 
-        private readonly IProductService _productService;
+        private readonly IProductService2 _productService;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService2 productService)
         {
             _productService = productService;
         }
@@ -19,34 +24,55 @@ namespace NetBootcamp.API.Products
 
         //baseUrl/api/products
         [HttpGet]
-        public IActionResult GetAll([FromServices] PriceCalculator priceCalculator)
+        public async Task<IActionResult> GetAll([FromServices] PriceCalculator priceCalculator)
         {
-            return Ok(_productService.GetAllWithCalculatedTax(priceCalculator));
+            return Ok(await _productService.GetAllWithCalculatedTax(priceCalculator));
         }
 
+        [ServiceFilter(typeof(NotFoundFilter))]
+        [MyResourceFilter]
+        [MyActionFilter]
+        [MyResultFilter]
         [HttpGet("{productId}")]
-        public IActionResult GetById(int productId, [FromServices] PriceCalculator priceCalculator)
+        public async Task<IActionResult> GetById(int productId, [FromServices] PriceCalculator priceCalculator)
         {
-            return CreateActionResult(_productService.GetByIdWithCalculatedTax(productId, priceCalculator));
+            return CreateActionResult(await _productService.GetByIdWithCalculatedTax(productId, priceCalculator));
+        }
+
+        [HttpGet("page/{page:int}/pagesize/{pageSize:max(50)}")]
+        public async Task<IActionResult> GetAllByPage(int page, int pageSize,
+           [FromServices] PriceCalculator priceCalculator)
+        {
+            return CreateActionResult(
+                await _productService.GetAllByPageWithCalculatedTax(priceCalculator, page, pageSize));
         }
 
 
         // complex type => class,record,struct => request body as Json
         // simple type => int,string,decimal => query string by default / route data
-
+        [SendSmsWhenExceptionFilter]
         [HttpPost]
-        public IActionResult Create(ProductCreateRequestDto request)
+        public async Task<IActionResult> Create(ProductCreateRequestDto request)
         {
-            var result = _productService.Create(request);
+            //throw new Exception("Db'ye gidemedi...");
+            var result = await _productService.Create(request);
 
             return CreateActionResult(result, nameof(GetById), new { productId = result.Data });
         }
 
         // PUT localhost/api/products/10
+        [ServiceFilter(typeof(NotFoundFilter))]
         [HttpPut("{productId}")]
-        public IActionResult Update(int productId, ProductUpdateRequestDto request)
+        public async Task<IActionResult> Update(int productId, ProductUpdateRequestDto request)
         {
-            return CreateActionResult(_productService.Update(productId, request));
+            return CreateActionResult(await  _productService.Update(productId, request));
+        }
+
+        [ServiceFilter(typeof(NotFoundFilter))]
+        [HttpPut("UpdateProductName")]
+        public async Task<IActionResult> UpdateProductName(ProductNameUpdateRequestDto request)
+        {
+            return CreateActionResult(await _productService.UpdateProductName(request.Id,request.Name));
         }
 
 
@@ -58,11 +84,11 @@ namespace NetBootcamp.API.Products
 
         //    return NoContent();
         //}
-
+        [ServiceFilter(typeof(NotFoundFilter))]
         [HttpDelete("{productId}")]
-        public IActionResult Delete(int productId)
+        public async Task<IActionResult> Delete(int productId)
         {
-            return CreateActionResult(_productService.Delete(productId));
+            return CreateActionResult(await  _productService.Delete(productId));
         }
     }
 }

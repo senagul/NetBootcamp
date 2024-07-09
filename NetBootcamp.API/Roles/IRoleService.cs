@@ -1,4 +1,5 @@
-﻿using NetBootcamp.API.DTOs;
+﻿
+using Bootcamp.Service.SharedDTOs;
 using NetBootcamp.API.Roles.DTOs;
 using System.Collections.Immutable;
 

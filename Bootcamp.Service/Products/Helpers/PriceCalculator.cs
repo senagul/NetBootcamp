@@ -1,4 +1,4 @@
-﻿namespace NetBootcamp.API.Products
+﻿namespace Bootcamp.Service.Products.Helpers
 {
     public class PriceCalculator
     {

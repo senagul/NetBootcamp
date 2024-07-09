@@ -1,4 +1,4 @@
-﻿namespace NetBootcamp.API.Products
+﻿namespace Bootcamp.Repository.Products
 {
     public class ProductRepository : IProductRepository
     {
@@ -23,7 +23,7 @@
 
         public void Create(Product product)
         {
-            var methodName = nameof(ProductsController.GetById); // GetById
+           /* var methodName = nameof(ProductsController.GetById);*/ // GetById
             _products.Add(product);
         }
 
@@ -39,6 +39,23 @@
             var product = GetById(id);
 
             _products.Remove(product!);
+        }
+
+        public IReadOnlyList<Product> GetAllByPage(int page, int pageSize)
+        {
+            return _products.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
+
+        public void UpdateProductName(string name, int id)
+        {
+            var product = GetById(id);
+
+            product!.Name = name;
+        }
+
+        public bool IsExists(string productName)
+        {
+            return _products.Any(x => x.Name == productName);
         }
     }
 }

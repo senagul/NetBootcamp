@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text.Json.Serialization;
 
-namespace NetBootcamp.API.DTOs
+namespace Bootcamp.Service.SharedDTOs
 {
     public struct NoContent; // 16 kb
 
