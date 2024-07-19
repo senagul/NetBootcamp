@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 // 1. AddSingleton
 // 2. AddScoped (*)
-// 3. AddTransient
+// 3. AddTransient 
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
