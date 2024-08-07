@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
-namespace NetBootcamp.API.ExceptionHandlers
+namespace Bootcamp.Service.ExceptionHandlers
 {
     public class CriticalExceptionHandler(ILogger<CriticalExceptionHandler> logger) : IExceptionHandler
     {

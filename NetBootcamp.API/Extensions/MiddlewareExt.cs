@@ -6,6 +6,9 @@
         {
 
             app.UseExceptionHandler();
+            //app.UseMiddleware<IPWhiteListMiddleware>();
+
+
             //app.UseExceptionHandler(appBuilder =>
             //{
             //    appBuilder.Run(async context =>
@@ -41,9 +44,12 @@
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
         }
+
+        
     }
 }

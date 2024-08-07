@@ -1,17 +1,21 @@
 using Bootcamp.Repository;
+using Bootcamp.Repository.Identities;
 using Bootcamp.Service;
 using Bootcamp.Service.Products.Configurations;
 using Bootcamp.Service.Products.Helpers;
+using Bootcamp.Service.Token;
+using Bootcamp.Service.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NetBootcamp.API.Extensions;
 using NetBootcamp.API.Filters;
-using NetBootcamp.API.Roles;
-using NetBootcamp.API.Users;
 using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 
 
@@ -25,34 +29,30 @@ builder.Services.AddControllers(x=> x.Filters.Add<ValidationFilter>());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRepository(builder.Configuration);
-builder.Services.AddService();
+builder.Services.AddService(builder.Configuration);
+builder.Services.AddScoped<IAuthorizationHandler,OverAgeRequirementHandler>();
 
-// Add services to the container.
+builder.Services.AddAuthorization(x => 
+{
+    x.AddPolicy("Over18AgePolicy", y => 
+    { 
+        y.AddRequirements(new OverAgeRequirement() { Age=18 }); 
+    });   
 
-
-// DI(Dependency Injection) Container framework
-// IoC ( Inversion Of Container)  framework
-//  - Dependency Inversion / Inversion Of Control Principles
-//  - Dependency Injection Design Pattern
-
-
-// 1. AddSingleton
-// 2. AddScoped (*)
-// 3. AddTransient
-
-
+    x.AddPolicy("UpdatePolicy", y => 
+    { 
+        y.RequireClaim("update", "true"); 
+    });
+});
 
 
 builder.Services.AddSingleton<PriceCalculator>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRoleService, RoleService>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 
 var app = builder.Build();
 
 app.SeedDatabase();
+await app.SeedIdentityData(); 
 
 // Configure the HTTP request pipeline.
 app.AddMiddlewares();

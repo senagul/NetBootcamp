@@ -1,8 +1,9 @@
 ﻿using Bootcamp.Service.SharedDTOs;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using System.Net;
 
-namespace NetBootcamp.API.ExceptionHandlers
+namespace Bootcamp.Service.ExceptionHandlers
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
@@ -10,7 +11,7 @@ namespace NetBootcamp.API.ExceptionHandlers
         {
             var responseModel = ResponseModelDto<NoContent>.Fail(exception.Message, HttpStatusCode.InternalServerError);
 
-            await httpContext.Response.WriteAsJsonAsync(responseModel,cancellationToken);
+            await httpContext.Response.WriteAsJsonAsync(responseModel, cancellationToken);
             return true;
         }
     }

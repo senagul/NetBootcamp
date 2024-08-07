@@ -2,6 +2,7 @@
 using Bootcamp.Service.Products.AsyncMethods;
 using Bootcamp.Service.Products.DTOs;
 using Bootcamp.Service.Products.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetBootcamp.API.Controllers;
 
@@ -23,6 +24,7 @@ namespace NetBootcamp.API.Products
 
 
         //baseUrl/api/products
+       
         [HttpGet]
         public async Task<IActionResult> GetAll([FromServices] PriceCalculator priceCalculator)
         {
@@ -50,6 +52,7 @@ namespace NetBootcamp.API.Products
 
         // complex type => class,record,struct => request body as Json
         // simple type => int,string,decimal => query string by default / route data
+        [Authorize(Roles = "editor")]
         [SendSmsWhenExceptionFilter]
         [HttpPost]
         public async Task<IActionResult> Create(ProductCreateRequestDto request)
@@ -61,6 +64,7 @@ namespace NetBootcamp.API.Products
         }
 
         // PUT localhost/api/products/10
+        [Authorize(Roles ="editor",Policy ="UpdatePolicy")]
         [ServiceFilter(typeof(NotFoundFilter))]
         [HttpPut("{productId}")]
         public async Task<IActionResult> Update(int productId, ProductUpdateRequestDto request)
@@ -84,6 +88,7 @@ namespace NetBootcamp.API.Products
 
         //    return NoContent();
         //}
+        [Authorize(policy:"Over18AgePolicy")]
         [ServiceFilter(typeof(NotFoundFilter))]
         [HttpDelete("{productId}")]
         public async Task<IActionResult> Delete(int productId)
